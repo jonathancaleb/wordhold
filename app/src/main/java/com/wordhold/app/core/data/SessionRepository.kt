@@ -21,6 +21,10 @@ class SessionRepository(
             sessions.groupBy { it.gameId }.mapValues { SessionStats.from(it.value, today) }
         }
 
+    /** Every day with at least one completed session, in any game. */
+    val completedDays: Flow<Set<Long>> =
+        dao.observeAll().map { sessions -> sessions.filter { it.completed }.mapTo(HashSet()) { it.date } }
+
     fun record(gameId: String, score: Int, durationSeconds: Int, completed: Boolean) {
         appScope.launch {
             dao.insert(
@@ -34,4 +38,10 @@ class SessionRepository(
             )
         }
     }
+
+    /** Levels of [gameId] the player has completed. */
+    suspend fun completedCount(gameId: String): Int = dao.countCompleted(gameId)
+
+    /** Deletes every recorded session. */
+    suspend fun deleteAll() = dao.deleteAll()
 }

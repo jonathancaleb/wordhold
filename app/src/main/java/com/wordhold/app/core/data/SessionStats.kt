@@ -26,6 +26,31 @@ fun streakDays(completedDays: Collection<Long>, today: Long): Int {
     return streak
 }
 
+/** The longest run of consecutive days in [completedDays]. */
+fun bestStreakDays(completedDays: Collection<Long>): Int {
+    var best = 0
+    var run = 0
+    var previous: Long? = null
+    for (day in completedDays.toSortedSet()) {
+        run = if (previous != null && day == previous + 1) run + 1 else 1
+        best = maxOf(best, run)
+        previous = day
+    }
+    return best
+}
+
+/**
+ * The days of the last [weeks] calendar weeks, Monday first, ending with the week that
+ * contains [today]. Later days of that week are included, so the list always fills a
+ * seven-column grid.
+ */
+fun recentWeeks(today: Long, weeks: Int = 5): List<Long> {
+    // Day 0, 1970-01-01, was a Thursday.
+    val monday = today - Math.floorMod(today + 3, 7L)
+    val first = monday - 7L * (weeks - 1)
+    return List(weeks * 7) { first + it }
+}
+
 /** Stats derived from a set of sessions: either one game's, or all of them. */
 data class SessionStats(
     val lastScore: Int?,
@@ -35,6 +60,9 @@ data class SessionStats(
     val totalSeconds: Long,
 ) {
     val hasPlayed: Boolean get() = lastScore != null
+
+    /** For one game's stats: the level the player is on. Each completed session is one level cleared. */
+    val level: Int get() = completedCount + 1
 
     companion object {
         /** [sessions] must be ordered newest first, as [GameSessionDao.observeAll] returns them. */

@@ -1,0 +1,264 @@
+"""Builds app/src/main/assets/crossword.json from the clue list below.
+
+usage (from the project root): python tools/make_crossword.py
+
+Each line is `answer|clue`. Answers are lowercase a-z, 3 to 8 letters.
+"""
+import json
+import pathlib
+
+CLUES = """
+cat|Pet that purrs
+dog|Pet that barks
+sun|Star at the centre of our solar system
+pen|It writes in ink
+map|Chart for finding your way
+key|It opens a lock
+ice|Frozen water
+egg|Hen's contribution to breakfast
+owl|Night bird that hoots
+bee|Honey maker
+tea|Drink brewed from leaves
+sea|Large body of salt water
+hat|Worn on the head
+bus|Road vehicle with many seats
+cup|Small drinking vessel
+ant|Tiny insect that lives in a colony
+arm|Limb between shoulder and hand
+ear|Organ for hearing
+eye|Organ for seeing
+fox|Cunning red-furred animal
+jam|Fruit spread for toast
+net|Mesh for catching fish
+oak|Tree that grows from an acorn
+pie|Baked dish with a crust
+toe|Digit on the foot
+web|Spider's trap
+zoo|Place to see wild animals
+art|Painting and sculpture, for example
+sky|Where clouds drift
+bed|Place to sleep
+book|Bound pages to read
+word|Unit of language
+moon|Earth's natural satellite
+star|Point of light in the night sky
+tree|Tall plant with a trunk
+rain|Water falling from clouds
+snow|Frozen flakes from the sky
+fish|Swimmer with fins and gills
+bird|Feathered flyer
+milk|White drink from cows
+door|Hinged entrance
+lamp|Light on a desk or table
+road|Route for cars
+ship|Large seagoing vessel
+king|Male monarch
+lion|Big cat with a mane
+bear|Large mammal fond of honey
+frog|Amphibian that croaks
+duck|Bird that quacks
+cake|Sweet baked treat for birthdays
+rice|Grain grown in paddies
+salt|Seasoning from the sea
+gold|Precious yellow metal
+iron|Metal that rusts
+wind|Moving air
+fire|Flames and heat
+leaf|Flat green part of a plant
+seed|A plant grows from it
+nest|Bird's home
+bell|It rings
+drum|Instrument you beat
+harp|Plucked instrument with many strings
+poem|Verse composition
+coin|Round piece of metal money
+desk|Table for working at
+sock|Worn inside a shoe
+boat|Small vessel for water
+kite|Flown on a string in the wind
+hand|It has four fingers and a thumb
+nose|Organ for smelling
+time|Clocks measure it
+year|Twelve months
+week|Seven days
+echo|Sound that bounces back
+wolf|Wild animal that howls in a pack
+river|Water flowing to the sea
+ocean|Vast body of salt water
+cloud|White puff in the sky
+storm|Thunder, lightning and heavy rain
+beach|Sandy shore
+tiger|Striped big cat
+zebra|Striped relative of the horse
+horse|Animal ridden with a saddle
+sheep|Woolly farm animal
+eagle|Large bird of prey
+whale|Largest animal in the sea
+shark|Sea predator with rows of teeth
+mouse|Small rodent, or a computer pointer
+apple|Fruit said to keep the doctor away
+lemon|Sour yellow fruit
+grape|Fruit that grows in bunches on a vine
+bread|Loaf baked from dough
+honey|Sweet food made by bees
+sugar|It sweetens tea and coffee
+water|Clear liquid essential for life
+chair|Seat with a back
+table|Furniture you eat at
+clock|It tells the time
+piano|Instrument with 88 keys
+music|Art of melody and rhythm
+paint|Coloured liquid for walls or canvas
+green|Colour of grass
+story|Tale
+novel|Long work of fiction
+paper|Sheets to write on
+train|It runs on rails
+plane|Winged aircraft
+robot|Machine that can act like a person
+smile|Happy expression
+dream|Story your mind tells while you sleep
+night|Time of darkness
+earth|Third planet from the sun
+stone|Small piece of rock
+glass|Windows are made of it
+house|Building to live in
+heart|Organ that pumps blood
+brain|Organ you think with
+camel|Desert animal with a hump
+panda|Black and white bear that eats bamboo
+queen|Female monarch
+month|About thirty days
+light|Opposite of dark
+quiet|Making little noise
+garden|Plot for growing flowers or vegetables
+flower|Bloom
+forest|Large area covered with trees
+island|Land surrounded by water
+bridge|Structure that crosses a river
+castle|Fortified home of a king
+window|Glass opening in a wall
+mirror|It shows your reflection
+candle|Wax stick with a wick
+pillow|Soft support for the head in bed
+bottle|Container with a narrow neck
+button|Shirt fastener
+pocket|Pouch sewn into clothes
+rabbit|Long-eared hopper
+monkey|Tree-swinging primate
+parrot|Bird that can mimic speech
+turtle|Reptile with a shell
+spider|Eight-legged web spinner
+butter|Spread churned from cream
+cheese|Dairy food, often on pizza
+pepper|Salt's partner at the table
+tomato|Red fruit used in ketchup
+potato|Vegetable made into chips
+carrot|Orange root vegetable
+banana|Curved yellow fruit
+cherry|Small red fruit with a stone
+coffee|Morning drink made from roasted beans
+planet|World that orbits a star
+rocket|Vehicle launched into space
+winter|Coldest season
+summer|Warmest season
+spring|Season after winter
+autumn|Season of falling leaves
+friend|Person you like and trust
+guitar|Six-stringed instrument
+violin|Stringed instrument played with a bow
+camera|Device for taking photos
+pencil|Writing tool with graphite
+school|Place of learning
+letter|A, B or C, for example
+puzzle|Game that tests your wits
+answer|Reply to a question
+silver|Metal for second place
+orange|Fruit that shares its name with a colour
+circle|Perfectly round shape
+square|Shape with four equal sides
+museum|Building that displays art or history
+desert|Dry, sandy region
+library|Building full of books to borrow
+penguin|Flightless bird of the Antarctic
+dolphin|Clever sea mammal that leaps
+giraffe|Tallest land animal
+morning|Start of the day
+evening|End of the day
+holiday|Day off, or a trip away
+rainbow|Arc of colours after rain
+volcano|Mountain that erupts
+kitchen|Room for cooking
+blanket|Warm bed covering
+picture|Painting or photograph
+diamond|Hardest gemstone
+balloon|Inflated party decoration
+bicycle|Two-wheeled pedal vehicle
+captain|Person in command of a ship
+teacher|Person who gives lessons
+science|Study of the natural world
+history|Study of the past
+concert|Live music performance
+trumpet|Brass instrument with three valves
+popcorn|Cinema snack
+pancake|Flat cake cooked in a pan
+freedom|Liberty
+mystery|Something unexplained
+village|Small rural community
+country|Nation
+journey|Trip from one place to another
+compass|Instrument that points north
+lantern|Portable lamp
+thunder|Sound that follows lightning
+sunrise|Dawn
+chapter|Section of a book
+grammar|Rules of a language
+weekend|Saturday and Sunday
+crystal|Clear, sparkling mineral
+pyramid|Ancient Egyptian tomb shape
+airport|Where planes take off and land
+kingdom|Realm ruled by a monarch
+alphabet|A to Z
+sentence|Group of words ending in a full stop
+language|English or Swahili, for example
+notebook|Pad for jotting things down
+keyboard|Set of keys for typing
+elephant|Largest land animal
+kangaroo|Australian hopper with a pouch
+mountain|Very high hill
+sunshine|Light from a cloudless sky
+umbrella|Shelter from the rain
+treasure|Pirate's buried hoard
+birthday|Day you get a year older
+calendar|Chart of days and months
+triangle|Shape with three sides
+question|It ends with this mark: ?
+sandwich|Filling between two slices of bread
+hospital|Where doctors and nurses work
+computer|Machine that runs programs
+bookmark|It keeps your place in a book
+envelope|Paper cover for a letter
+daughter|Female child
+painting|Artwork on canvas
+"""
+
+
+def main():
+    clues = {}
+    for line in CLUES.strip().splitlines():
+        answer, clue = line.split("|", 1)
+        assert answer.isalpha() and answer.islower() and 3 <= len(answer) <= 8, answer
+        assert answer not in clues, f"duplicate: {answer}"
+        clues[answer] = clue.strip()
+    out = pathlib.Path(__file__).resolve().parent.parent / "app/src/main/assets/crossword.json"
+    with open(out, "w", encoding="utf-8", newline="\n") as f:
+        json.dump({"version": 1, "clues": clues}, f, ensure_ascii=False, separators=(",", ":"))
+        f.write("\n")
+    by_length = {}
+    for answer in clues:
+        by_length[len(answer)] = by_length.get(len(answer), 0) + 1
+    print(len(clues), "clues;", dict(sorted(by_length.items())))
+
+
+if __name__ == "__main__":
+    main()

@@ -1,5 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    The one place Wordhold's colours are defined: the tokens of the design spec.
+    Compose reads them in core/ui/theme/Theme.kt and the window theme references them
+    directly. Change a colour here and it changes everywhere.
+-->
 <resources>
-    <!-- Matches WordholdColors.background so there is no flash before Compose draws. -->
-    <color name="window_background">#FFF1F2F6</color>
+    <!-- Text, every outline, primary buttons. -->
+    <color name="wh_ink">#FF111111</color>
+    <!-- Background of the catalogue, game intro and progress. Also the window background,
+         so there is no flash before Compose draws. -->
+    <color name="wh_sage">#FFAFCD87</color>
+    <!-- Game backgrounds, cards and chips. -->
+    <color name="wh_periwinkle">#FFA8BCF0</color>
+    <color name="wh_butter">#FFF6DE8E</color>
+    <!-- Cards, keys, the bottom bar, empty tiles. -->
+    <color name="wh_white">#FFFFFFFF</color>
+    <!-- Tile states. They differ in lightness as well as hue: mid, light, dark. -->
+    <color name="wh_tile_correct">#FF7FBF4D</color>
+    <color name="wh_tile_present">#FFF6DE8E</color>
+    <color name="wh_tile_absent">#FF2B2B2B</color>
+    <!-- Outline of an empty tile, and of an unplayed day. -->
+    <color name="wh_empty_outline">#FF8A8A84</color>
+    <color name="wh_muted_outline">#FFC4C4BE</color>
+
+    <!-- The launcher icon's own two colours. tools/make_icons.ps1 reads them from here
+         when it renders the PNG icons. Not used inside the app. -->
+    <color name="wh_icon_accent">#FF3B4BD8</color>
+    <color name="wh_icon_tile">#FFFFFFFF</color>
 </resources>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Wordhold" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/wh_sage</item>
+        <!-- Stop the system darkening the app on its own when dark mode is on. -->
+        <item name="android:forceDarkAllowed">false</item>
+    </style>
+</resources>

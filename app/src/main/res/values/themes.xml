@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- One appearance only: there is deliberately no values-night variant. -->
     <style name="Theme.Wordhold" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:windowBackground">@color/window_background</item>
+        <item name="android:windowBackground">@color/wh_sage</item>
     </style>
 </resources>

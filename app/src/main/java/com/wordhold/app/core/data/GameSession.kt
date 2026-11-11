@@ -34,6 +34,12 @@ interface GameSessionDao {
     @Insert
     suspend fun insert(session: GameSession)
 
+    @Query("DELETE FROM game_sessions")
+    suspend fun deleteAll()
+
+    @Query("SELECT COUNT(*) FROM game_sessions WHERE gameId = :gameId AND completed = 1")
+    suspend fun countCompleted(gameId: String): Int
+
     /** Newest first. */
     @Query("SELECT * FROM game_sessions ORDER BY date DESC, id DESC")
     fun observeAll(): Flow<List<GameSession>>

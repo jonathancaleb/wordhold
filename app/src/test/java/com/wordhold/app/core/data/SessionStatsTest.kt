@@ -70,4 +70,21 @@ class SessionStatsTest {
         // 1970-01-01 02:00 UTC is still 1969-12-31 in New York.
         assertEquals(-1L, currentEpochDay(2 * 3_600_000L, newYork))
     }
+
+    @Test
+    fun `best streak is the longest run of consecutive days`() {
+        assertEquals(0, bestStreakDays(emptyList()))
+        assertEquals(3, bestStreakDays(listOf(10L, 1L, 2L, 3L, 3L, 11L)))
+    }
+
+    @Test
+    fun `recent weeks start on a Monday and end with this week`() {
+        // Day 4, 1970-01-05, was a Monday; day 20_000 is a Friday.
+        val monday = today - 4
+        val days = recentWeeks(today)
+        assertEquals(35, days.size)
+        assertEquals(0L, Math.floorMod(days.first() - 4, 7L))
+        assertEquals(monday - 28, days.first())
+        assertEquals(monday + 6, days.last())
+    }
 }

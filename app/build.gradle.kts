@@ -4,6 +4,9 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+// Shown in the Privacy Policy and Terms. Set `wordhold.contactEmail` in gradle.properties.
+val contactEmail = providers.gradleProperty("wordhold.contactEmail").getOrElse("").trim()
+
 android {
     namespace = "com.wordhold.app"
     compileSdk {
@@ -17,7 +20,9 @@ android {
         minSdk = 24
         targetSdk = 37
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.0"
+
+        resValue("string", "contact_email", contactEmail)
     }
 
     buildTypes {
@@ -34,6 +39,18 @@ android {
     }
     buildFeatures {
         compose = true
+        resValues = true
+    }
+}
+
+// A release must not ship legal pages with a blank contact address.
+tasks.matching { it.name == "preReleaseBuild" }.configureEach {
+    val email = contactEmail
+    doFirst {
+        check(email.isNotEmpty()) {
+            "Set wordhold.contactEmail in gradle.properties before building a release: " +
+                "it is the contact address shown in the Privacy Policy and Terms."
+        }
     }
 }
 

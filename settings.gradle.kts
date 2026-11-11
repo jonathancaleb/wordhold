@@ -22,5 +22,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Wordhold"
+rootProject.name = "WordHold"
 include(":app")
